@@ -1,0 +1,10 @@
+[workspace]
+resolver = "2"
+members = ["src/ozdemirgpuithemepack", "src/ThemeGallery"]
+
+[workspace.package]
+version = "0.0.0"
+edition = "2024"
+
+[workspace.dependencies]
+lightningcss = "=1.0.0-alpha.72"

@@ -1,0 +1,9 @@
+[package]
+name = "ThemeGallery"
+description = "OzdemirGPUIThemePack gallery — live Fluent theme preview (gpui-kit)"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+gpui-kit = "0.6"
+ozdemirgpuithemepack = { path = "../ozdemirgpuithemepack" }

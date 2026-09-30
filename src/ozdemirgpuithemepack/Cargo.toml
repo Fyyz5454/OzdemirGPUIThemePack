@@ -1,0 +1,10 @@
+[package]
+name = "ozdemirgpuithemepack"
+description = "Fluent UI theme pack for gpui-kit (Rust-first tokens, CSS theme files)"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+gpui-kit = "0.6"
+serde_json = "1"
+lightningcss.workspace = true
