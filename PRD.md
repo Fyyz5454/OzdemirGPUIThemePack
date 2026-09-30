@@ -13,7 +13,7 @@ Project history: the repository began as a Linux file-manager product that was c
 ### Goals
 
 - **Library crate `ozdemirgpuithemepack`**: Fluent 2 design tokens in Rust (`fluentui::colors`), the gpui-kit bridge (`fluentui::theme::apply`), and a CSS theme-file loader (`css::parse`/`css::load`).
-- **CSS theme files**: `themes/*.css` — one `:root { --key: value; }` sheet per variant, 8 accents × light/dark. **No JSON theme files** (decision 1).
+- **CSS theme files**: embedded `src/ozdemirgpuithemepack/resources/themes/*.css` — one `:root { --key: value; }` sheet per variant, 8 accents × light/dark. **No JSON theme files** (decision 1).
 - **Gallery application `ThemeGallery`**: live switching across all 16 variants over a gpui-kit widget showcase; theme preview is the product, not a debug tool.
 - Deterministic generation: files are produced by `GenThemes` from the Rust tokens and byte-checked by the `themes_are_in_sync` test.
 
@@ -31,7 +31,7 @@ Confirmed:
 - Typography bridge: Segoe UI Variable family chain resolved at runtime with silent fallback.
 - Live theme application through gpui-kit's `Theme::change` (base sync, text defaults, window refresh).
 - CSS loader with strict grammar: colors normalize to `#RRGGBBAA`, unknown properties warn, missing required properties error.
-- Gallery UI (Turkish strings): accent radio group, dark-mode switch, variant select, default-reset, plus the gpui-kit widget showcase.
+- Gallery UI (English strings): AtlantaFX-sampler layout — grouped sidebar navigation ("General" + "Components"), one page per gpui-kit control family, title-bar theme switcher (accent dropdown + light/dark toggle), and a search palette over page names. General pages (Overview, Colors, Typography, Theme) render straight from the Fluent tokens; the Theme page applies any of the 16 variants by clicking its card.
 
 Roadmap:
 
@@ -41,9 +41,9 @@ Roadmap:
 
 ## 4. Architecture
 
-- `src/ozdemirgpuithemepack` — the library. `src/fluentui/` (token source of truth: `colors.rs`, `typography.rs`, `fonts.rs`, `theme.rs`), `src/css.rs` (lightningcss-based `.css` → `ThemeConfig` loader), `src/bin/GenThemes.rs` (writes `themes/*.css`).
+- `src/ozdemirgpuithemepack` — the library. `src/fluentui/` (token source of truth: `colors.rs`, `typography.rs`, `fonts.rs`, `theme.rs`), `src/css.rs` (lightningcss-based `.css` → `ThemeConfig` loader), `src/resources.rs` (embedded theme sheets), `src/bin/GenThemes.rs` (writes `resources/themes/*.css`).
 - `src/ThemeGallery` — the gallery binary; applies themes via the library only.
-- `themes/` — 16 generated CSS files. **Generated, never hand-edited.**
+- `src/ozdemirgpuithemepack/resources/themes/` — 16 generated CSS files, embedded via `include_str!`. **Generated, never hand-edited.**
 - Theme file grammar: gpui-kit `ThemeConfigColors` schema key `primary.hover.background` → `--primary-hover-background`; meta keys `--name`, `--mode` (light|dark), `--radius`/`--radius-lg` (px), `--shadow` (none|drop); `font.family` intentionally absent (runtime-resolved).
 
 ## 5. Decisions (resolved)
@@ -52,6 +52,7 @@ Roadmap:
 2. **CSS parser: `lightningcss` — RESOLVED (2026-09-30)**: user pick of a ready-made full CSS parser over a hand-rolled tokenizer or a thin `cssparser` layer. Pinned `=1.0.0-alpha.72` (alpha accepted); all usage isolated behind `src/css.rs` so the parser can be swapped without touching callers. Note: lightningcss normalizes colors (`#fff`, `rgba()`, hex compaction), so the loader re-emits every color as canonical `#RRGGBBAA`.
 3. **Product shape: library + gallery (+ designer later) — RESOLVED (2026-09-30)**.
 4. **FM cancellation — RESOLVED (2026-09-30)**: uncommitted engine work (fs/archive/thumbnail engine code, workspace engine dependencies) deleted without an archive branch, per user decision.
+5. **Gallery layout: AtlantaFX-sampler style — RESOLVED (2026-09-30)**: the gallery was migrated to the AtlantaFX sampler pattern (layout inspiration only, no code copied). Sidebar navigation with "Genel"/"Bileşenler" groups, ~45 per-control pages, title-bar theme switcher (accent dropdown + light/dark toggle), and a command-palette page search. Excluded modules (dock, plot, highlighter, setting, status bar, skeleton, shimmer, carousel, hover card, message) can be added page-by-page later.
 
 ## 6. Constraints & environment notes
 
@@ -62,6 +63,6 @@ Roadmap:
 
 ## 7. Open decisions (each to be resolved in a dedicated Q&A round, one question at a time)
 
-1. **Theme designer MVP scope** — which token groups are editable, and does it write back into `themes/` or a user directory?
+1. **Theme designer MVP scope** — which token groups are editable, and does it write back into the embedded theme resources or a user directory?
 2. **crates.io publishing** — timing, name availability, semver start.
-3. **Additional design languages** — whether Material (or others) becomes a second token module.
+3. **Additional design languages** — DEFERRED (2026-09-30): the project will grow beyond Fluent (Material, Adwaita, …), but not yet. When it happens, the direction is a `design/` parent module in the library (`design/fluent/`, `design/material/`, …) behind a `Design` facade exposing design-agnostic accents/apply/theme_name/css, with the gallery switching through the facade. The embedded resources stay flat for now so per-design subfolders can be added later without further moves.

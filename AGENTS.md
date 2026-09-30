@@ -4,7 +4,7 @@ Ground rules for humans and coding agents working in this repository.
 
 ## What this project is
 
-**OzdemirGPUIThemePack** — a **Fluent UI theme pack for gpui-kit 0.6**: a Rust-first token library (`ozdemirgpuithemepack`), generated CSS theme files (`themes/*.css`), and a live-preview gallery app (`ThemeGallery`). See [PRD.md](PRD.md) for the product definition, resolved decisions, and open questions.
+**OzdemirGPUIThemePack** — a **Fluent UI theme pack for gpui-kit 0.6**: a Rust-first token library (`ozdemirgpuithemepack`), CSS theme sheets embedded in the crate (`resources/themes/*.css`), and a live-preview gallery app (`ThemeGallery`). See [PRD.md](PRD.md) for the product definition, resolved decisions, and open questions.
 
 History: the repo started as a cancelled file-manager product; its engine code was deleted. Do not reintroduce file-manager/engine work.
 
@@ -25,15 +25,15 @@ System dependencies (one-time): `sudo apt install libfontconfig1-dev libxkbcommo
 - `src/ozdemirgpuithemepack` — the **library crate**.
   - `src/fluentui/` — **the token source of truth**: `colors.rs` (Fluent 2 tokens, ARGB u32 → gpui `Rgba`), `typography.rs`, `fonts.rs` (Segoe UI family chain), `theme.rs` (tokens → gpui-kit `ThemeConfig`; `apply`/`apply_config` via `Theme::change`; `theme_css` deterministic CSS generator).
   - `src/css.rs` — CSS theme-file loader (lightningcss): `:root` custom properties → `ThemeConfig`; colors normalize to `#RRGGBBAA`.
-  - `src/bin/GenThemes.rs` — writes `themes/Fluent{Light|Dark}{Accent}.css`.
-- `src/ThemeGallery` — the gallery app: live accent/darkness switching over the gpui-kit widget showcase; Turkish UI strings.
-- `themes/` — 16 generated files (`Fluent{Light|Dark}{Accent}.css`). **Generated, never hand-edited.**
+  - `src/bin/GenThemes.rs` — writes `resources/themes/Fluent{Light|Dark}{Accent}.css`.
+- `src/ThemeGallery` — the gallery app (AtlantaFX-sampler layout): `layout/` (title bar with the live theme switcher + search palette, sidebar navigation) and `pages/` (registry + `general/` + `components/`, one page per gpui-kit control family); English UI strings.
+- `src/ozdemirgpuithemepack/resources/themes/` — 16 generated files (`Fluent{Light|Dark}{Accent}.css`), embedded via `include_str!` and exposed by `src/resources.rs`. **Generated, never hand-edited.**
 
 ## Language & tooling rules
 
 1. **Reply in the language of the incoming prompt.** A Turkish prompt gets a Turkish answer, an English prompt an English answer, and so on.
 2. **LSP, the debugger MCP, and the headless-browser MCP are mandatory tools.** Use LSP for code navigation and refactors, the debugger MCP when diagnosing failures, and the headless browser (Playwright MCP) for anything web-related. If a required tool/MCP is unavailable in the session, say so explicitly and proceed best-effort.
-3. **This is a global project: code and naming are English.** Identifiers, comments, file names, and commit messages are all in English. (User-facing UI strings remain Turkish until the TR+EN i18n architecture lands — see Hard rule 5.)
+3. **This is a global project: code and naming are English.** Identifiers, comments, file names, commit messages, and user-facing UI strings are all in English.
 4. **Web research goes through the headless browser**, issuing queries in **both English and Chinese**.
 
 ## Hard rules
@@ -42,10 +42,10 @@ System dependencies (one-time): `sudo apt install libfontconfig1-dev libxkbcommo
 2. **Dry-run before renames/moves.** List the affected references first (e.g. `grep -rn "old-name" --include="*.toml" --include="*.rs"`), show them, then act, then rebuild + test.
 3. **One question at a time** when interviewing the user about design decisions. Never batch questions.
 4. **No JSON theme files.** gpui-kit's `ThemeRegistry` only reads JSON; this pack deliberately replaced JSON with CSS loaded through `ozdemirgpuithemepack::css` (PRD decision 1). Never reintroduce JSON theme output, `register_theme_dir`, or direct `ThemeSet` serialization without a new user decision.
-5. **UI strings are Turkish** in the gallery (TR+EN i18n is a distant plan; keep user-visible strings in the UI layer Turkish for now).
+5. **UI strings are English** in the gallery (global project; keep user-visible strings in the UI layer English).
 6. **Window/title bar**: gpui-kit `TitleBar` + `WindowOptions { window_decorations: Some(WindowDecorations::Client), ..TitleBar::window_options() }`. Do not reintroduce the system title bar.
 7. **Commits**: messages in **English**; repo-local git identity is `omer <omer@localhost>` (never change global git config). Only commit when the user asks.
-8. **No GPL code.** Reference projects are for inspiration only; verify per-crate licenses when adding dependencies (`lightningcss` is MPL-2.0, pure Rust, pinned `=1.0.0-alpha.72`).
+8. **No GPL dependencies.** Reference projects are for inspiration only; verify per-crate licenses when adding dependencies (`lightningcss` is MPL-2.0, pure Rust, pinned `=1.0.0-alpha.72`; the gpui-kit stack is Apache-2.0). The project's own license is AGPL-3.0-or-later (see `LICENSE`).
 
 ## Environment notes (Linux/X11)
 

@@ -4,7 +4,7 @@ Bu depoda çalışan insanlar ve kodlama ajanları için temel kurallar. İngili
 
 ## Bu proje nedir
 
-**OzdemirGPUIThemePack** — gpui-kit 0.6 için bir **Fluent UI tema paketi**: Rust-öncelikli token kütüphanesi (`ozdemirgpuithemepack`), üretilen CSS tema dosyaları (`themes/*.css`) ve canlı önizlemeli galeri uygulaması (`ThemeGallery`). Ürün tanımı ve kararlar için [PRD.md](PRD.md).
+**OzdemirGPUIThemePack** — gpui-kit 0.6 için bir **Fluent UI tema paketi**: Rust-öncelikli token kütüphanesi (`ozdemirgpuithemepack`), crate içine gömülü CSS tema sayfaları (`resources/themes/*.css`) ve canlı önizlemeli galeri uygulaması (`ThemeGallery`). Ürün tanımı ve kararlar için [PRD.md](PRD.md).
 
 Geçmiş: depo iptal edilmiş bir dosya yöneticisi ürünü olarak başladı; motor kodu silindi. Dosya yöneticisi/motor işini geri getirmeyin.
 
@@ -25,15 +25,15 @@ Sistem bağımlılıkları (bir kez): `sudo apt install libfontconfig1-dev libxk
 - `src/ozdemirgpuithemepack` — **kütüphane crate'i**.
   - `src/fluentui/` — **token doğruluk kaynağı**: `colors.rs` (Fluent 2 tokenleri, ARGB u32 → gpui `Rgba`), `typography.rs`, `fonts.rs` (Segoe UI aile zinciri), `theme.rs` (tokenler → gpui-kit `ThemeConfig`; `Theme::change` üzerinden `apply`/`apply_config`; deterministik CSS üreticisi `theme_css`).
   - `src/css.rs` — CSS tema dosyası yükleyici (lightningcss): `:root` custom properties → `ThemeConfig`; renkler `#RRGGBBAA`'ya normalleşir.
-  - `src/bin/GenThemes.rs` — `themes/Fluent{Light|Dark}{Accent}.css` üretir.
-- `src/ThemeGallery` — galeri uygulaması: gpui-kit bileşen vitrini üzerinde canlı vurgu/açık-koyu geçişi; Türkçe UI dizgileri.
-- `themes/` — 16 üretilmiş dosya (`Fluent{Light|Dark}{Accent}.css`). **Üretilir, elle asla düzenlenmez.**
+  - `src/bin/GenThemes.rs` — `resources/themes/Fluent{Light|Dark}{Accent}.css` üretir.
+- `src/ThemeGallery` — galeri uygulaması (AtlantaFX sampler düzeni): `layout/` (canlı tema anahtarı + arama paleti içeren başlık çubuğu, yan menü gezinmesi) ve `pages/` (kayıt + `general/` + `components/`, her gpui-kit bileşen ailesi için bir sayfa); İngilizce UI dizgileri.
+- `src/ozdemirgpuithemepack/resources/themes/` — 16 üretilmiş dosya (`Fluent{Light|Dark}{Accent}.css`), `include_str!` ile gömülü ve `src/resources.rs` üzerinden sunulur. **Üretilir, elle asla düzenlenmez.**
 
 ## Dil ve araç kuralları
 
 1. **Gelen prompt hangi dildeyse o dilde yanıt verin.**
 2. **LSP, debugger MCP ve headless-web-browser MCP zorunlu araçlardır.** Oturumda gerekli araç/MCP yoksa bunu açıkça belirtin ve elden geldiğince devam edin.
-3. **Bu global bir projedir: kod ve isimlendirme İngilizcedir.** (Kullanıcıya görünür UI dizgileri, TR+EN i18n mimarisi gelene dek Türkçe kalır — Katı kural 5.)
+3. **Bu global bir projedir: kod ve isimlendirme İngilizcedir.** Kullanıcıya görünür UI dizgileri de İngilizcedir.
 4. **Web araştırması headless tarayıcı üzerinden yapılır**; sorgular **hem İngilizce hem Çince** yazılır.
 
 ## Katı kurallar
@@ -42,10 +42,10 @@ Sistem bağımlılıkları (bir kez): `sudo apt install libfontconfig1-dev libxk
 2. **Yeniden adlandırma/taşıma öncesi dry-run.** Önce etkilenen referansları listeleyin, gösterin, sonra uygulayın, sonra derleyin + test edin.
 3. Tasarım kararları hakkında kullanıcıyla görüşürken **aynı anda tek soru**.
 4. **JSON tema dosyası yok.** gpui-kit'in `ThemeRegistry`'si yalnızca JSON okur; bu paket JSON'ı bilinçli olarak `ozdemirgpuithemepack::css` üzerinden yüklenen CSS ile değiştirdi (PRD karar 1). Yeni bir kullanıcı kararı olmadan JSON tema çıktısını, `register_theme_dir`'ı veya doğrudan `ThemeSet` serileştirmesini geri getirmeyin.
-5. **UI dizgileri Türkçe** (galeride; TR+EN i18n uzak bir plandır; kullanıcıya görünür dizgiler UI katmanında Türkçe kalır).
+5. **UI dizgileri İngilizcedir** (galeride; global proje — kullanıcıya görünür dizgiler UI katmanında İngilizce kalır).
 6. **Pencere/başlık çubuğu**: gpui-kit `TitleBar` + `WindowOptions { window_decorations: Some(WindowDecorations::Client), ..TitleBar::window_options() }`. Sistem başlık çubuğunu geri getirmeyin.
 7. **Commit'ler**: mesajlar **İngilizce**; depo-yerel git kimliği `omer <omer@localhost>` (global git yapılandırması asla değiştirilmez). Yalnızca kullanıcı istediğinde commit yapın.
-8. **GPL kod alınmaz.** Bağımlılık eklerken crate başına lisans doğrulayın (`lightningcss` MPL-2.0, saf Rust, pinli `=1.0.0-alpha.72`).
+8. **GPL bağımlılık alınmaz.** Bağımsız projeler yalnızca esin kaynağıdır; bağımlılık eklerken crate başına lisans doğrulayın (`lightningcss` MPL-2.0, saf Rust, pinli `=1.0.0-alpha.72`; gpui-kit yığını Apache-2.0). Projenin kendi lisansı AGPL-3.0-or-later (`LICENSE` dosyasına bakın).
 
 ## Ortam notları (Linux/X11)
 

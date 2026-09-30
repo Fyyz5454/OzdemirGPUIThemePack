@@ -14,13 +14,13 @@ A **Fluent UI theme pack for [gpui-kit](https://gpui-kit.com/)** (the component 
   // Straight from the Rust tokens:
   theme::apply(Accent::Teal, true, Some(window), cx);
 
-  // Or from a generated theme file:
+  // Or from an embedded theme sheet:
   use ozdemirgpuithemepack::css;
-  let config = css::load(std::path::Path::new("themes/FluentDarkTeal.css"))?;
+  let config = css::load_embedded("FluentDarkTeal")?;
   theme::apply_config(config, Some(window), cx);
   ```
 
-- **16 theme files** (`themes/*.css`, 8 accents × light/dark) as single `:root` custom-property sheets:
+- **16 embedded theme files** (`src/ozdemirgpuithemepack/resources/themes/*.css`, 8 accents × light/dark) as single `:root` custom-property sheets, embedded into the crate:
 
   ```css
   /* OzdemirGPUIThemePack — FluentLightBlue */
@@ -40,7 +40,7 @@ A **Fluent UI theme pack for [gpui-kit](https://gpui-kit.com/)** (the component 
 
   A gpui-kit schema key (`primary.hover.background`) maps to `--primary-hover-background`; colors always normalize to `#RRGGBBAA`. gpui-kit's own `ThemeRegistry` only reads JSON — the CSS path is provided by this crate (`ozdemirgpuithemepack::css`).
 
-- **Gallery app `ThemeGallery`** — every gpui-kit control under the active variant, with live accent/darkness switching (theme preview **is** the product).
+- **Gallery app `ThemeGallery`** — an AtlantaFX-sampler-style showcase: a grouped left sidebar ("Genel" + "Bileşenler", ~45 pages), a per-control page for every gpui-kit widget family, and live theme switching from the title bar (accent dropdown + light/dark toggle) plus a search palette over page names.
 
 ## Repository layout
 
@@ -48,8 +48,10 @@ A **Fluent UI theme pack for [gpui-kit](https://gpui-kit.com/)** (the component 
 src/ozdemirgpuithemepack/   Library crate (tokens, gpui-kit bridge, CSS loader, GenThemes bin)
   src/fluentui/             Fluent 2 design tokens → gpui-kit (Rust-first)
   src/css.rs                lightningcss .css → ThemeConfig loader
-src/ThemeGallery/           Gallery app (live theme preview)
-themes/                     16 generated CSS theme files (8 accents × light/dark)
+src/ThemeGallery/           Gallery app (AtlantaFX-sampler-style live preview)
+  src/layout/               Title bar (theme switcher + search), sidebar nav
+  src/pages/                Page registry + general/ + components/ pages
+src/ozdemirgpuithemepack/resources/themes/   16 generated CSS theme files (8 accents × light/dark), embedded in the crate
 .kilo/skills/               Project skills (FluentTheme, GpuiKit)
 tr/                         Turkish mirrors of the documentation
 ```
@@ -76,7 +78,7 @@ cargo clippy --workspace --all-targets
 
 ### Fluent theme files
 
-`themes/*.css` are **generated** from the Rust token module — never edit them by hand. After changing `src/ozdemirgpuithemepack/src/fluentui/colors.rs` or `theme.rs`:
+The embedded `resources/themes/*.css` are **generated** from the Rust token module — never edit them by hand. After changing `src/ozdemirgpuithemepack/src/fluentui/colors.rs` or `theme.rs`:
 
 ```sh
 cargo run -p ozdemirgpuithemepack --bin GenThemes
@@ -107,4 +109,4 @@ _TBD_
 
 ## License
 
-Project licensing TBD. The CSS parser (`lightningcss`) is MPL-2.0; no GPL code enters this repository.
+Copyright (C) 2026 Fyyz5454. This project is licensed under the [GNU AGPL-3.0-or-later](LICENSE). Dependencies: the gpui-kit stack (Apache-2.0) and `lightningcss` (MPL-2.0).

@@ -14,13 +14,13 @@
   // Doğrudan Rust tokenlerinden:
   theme::apply(Accent::Teal, true, Some(window), cx);
 
-  // Ya da üretilmiş bir tema dosyasından:
+  // Ya da gömülü bir tema sayfasından:
   use ozdemirgpuithemepack::css;
-  let config = css::load(std::path::Path::new("themes/FluentDarkTeal.css"))?;
+  let config = css::load_embedded("FluentDarkTeal")?;
   theme::apply_config(config, Some(window), cx);
   ```
 
-- **16 tema dosyası** (`themes/*.css`, 8 vurgu rengi × açık/koyu), her biri tek `:root` custom-property sayfası:
+- **16 gömülü tema dosyası** (`src/ozdemirgpuithemepack/resources/themes/*.css`, 8 vurgu rengi × açık/koyu), her biri tek `:root` custom-property sayfası; crate içine gömülü:
 
   ```css
   /* OzdemirGPUIThemePack — FluentLightBlue */
@@ -40,7 +40,7 @@
 
   gpui-kit şema anahtarı (`primary.hover.background`), `--primary-hover-background` ile eşleşir; renkler her zaman `#RRGGBBAA`'ya normalleşir. gpui-kit'in kendi `ThemeRegistry`'si yalnızca JSON okur — CSS yolunu bu crate sağlar (`ozdemirgpuithemepack::css`).
 
-- **Galeri uygulaması `ThemeGallery`** — tüm gpui-kit bileşenleri aktif varyant altında; canlı vurgu/açık-koyu geçişiyle (tema önizlemesi **ürünün kendisidir**).
+- **Galeri uygulaması `ThemeGallery`** — AtlantaFX sampler düzeninde vitrin: gruplu sol menü ("Genel" + "Bileşenler", ~45 sayfa), her gpui-kit bileşen ailesi için ayrı sayfa, başlık çubuğundan canlı tema geçişi (vurgu açılır listesi + açık/koyu düğmesi) ve sayfa adları üzerinden arama paleti.
 
 ## Depo yapısı
 
@@ -48,8 +48,10 @@
 src/ozdemirgpuithemepack/   Kütüphane crate'i (tokenler, gpui-kit köprüsü, CSS yükleyici, GenThemes bin)
   src/fluentui/             Fluent 2 tasarım tokenleri → gpui-kit (Rust öncelikli)
   src/css.rs                lightningcss .css → ThemeConfig yükleyici
-src/ThemeGallery/           Galeri uygulaması (canlı tema önizlemesi)
-themes/                     Üretilmiş 16 CSS tema dosyası (8 renk × açık/koyu)
+src/ThemeGallery/           Galeri uygulaması (AtlantaFX sampler düzeninde canlı önizleme)
+  src/layout/               Başlık çubuğu (tema anahtarı + arama), yan menü
+  src/pages/                Sayfa kaydı + general/ + components/ sayfaları
+src/ozdemirgpuithemepack/resources/themes/   Üretilmiş 16 CSS tema dosyası (8 renk × açık/koyu), crate içine gömülü
 .kilo/skills/               Proje yetenekleri (FluentTheme, GpuiKit)
 tr/                         Belgelerin Türkçe karşılıkları
 ```
@@ -76,7 +78,7 @@ cargo clippy --workspace --all-targets
 
 ### Fluent tema dosyaları
 
-`themes/*.css` Rust token modülünden **üretilir** — asla elle düzenlemeyin. `src/ozdemirgpuithemepack/src/fluentui/colors.rs` veya `theme.rs` değiştirildikten sonra:
+Gömülü `resources/themes/*.css` Rust token modülünden **üretilir** — asla elle düzenlemeyin. `src/ozdemirgpuithemepack/src/fluentui/colors.rs` veya `theme.rs` değiştirildikten sonra:
 
 ```sh
 cargo run -p ozdemirgpuithemepack --bin GenThemes
@@ -107,4 +109,4 @@ _Yok_
 
 ## Lisans
 
-Proje lisansı TBD. CSS çözümleyici (`lightningcss`) MPL-2.0'dır; bu depoya GPL kod girmez.
+Copyright (C) 2026 Fyyz5454. Bu proje [GNU AGPL-3.0-or-later](../LICENSE) ile lisanslanmıştır. Bağımlılıklar: gpui-kit yığını (Apache-2.0) ve `lightningcss` (MPL-2.0).

@@ -431,7 +431,7 @@ mod tests {
     /// Drift olursa: `cargo run -p ozdemirgpuithemepack --bin GenThemes`
     #[test]
     fn themes_are_in_sync() {
-        let dir = std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../../themes");
+        let dir = std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("resources/themes");
         let mut files = 0;
         for variant in variants() {
             let path = dir.join(format!(

@@ -70,6 +70,14 @@ pub fn load(path: &Path) -> Result<ThemeConfig, ThemeCssError> {
     parse(&css)
 }
 
+/// Parses one of the crate's embedded theme sheets by name
+/// (e.g. `"FluentDarkTeal"`); see [`crate::resources`].
+pub fn load_embedded(name: &str) -> Result<ThemeConfig, ThemeCssError> {
+    let css = crate::resources::get(name)
+        .ok_or_else(|| err(format!("unknown embedded theme: {name}")))?;
+    parse(css)
+}
+
 /// Parses a theme stylesheet (`:root { --key: value; … }`) into a
 /// gpui-kit [`ThemeConfig`].
 pub fn parse(css: &str) -> Result<ThemeConfig, ThemeCssError> {
