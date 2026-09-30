@@ -1,8 +1,12 @@
 [package]
 name = "ozdemirgpuithemepack"
-description = "Fluent UI theme pack for gpui-kit (Rust-first tokens, CSS theme files)"
+description = "Fluent UI theme pack for gpui-kit: Rust-first tokens, live theming, and embedded CSS theme sheets"
 version.workspace = true
 edition.workspace = true
+license = "AGPL-3.0-or-later"
+repository = "https://github.com/Fyyz5454/OzdemirGPUIThemePack"
+keywords = ["gpui", "gpui-kit", "fluent", "theme", "gui"]
+categories = ["gui", "development-tools"]
 
 [dependencies]
 gpui-kit = "0.6"
